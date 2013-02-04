@@ -8,39 +8,85 @@ var constants = {LEFT:37,UP:38,RIGHT:39,DOWN:40};
 var speed = 2;
 var angularSpeed = 2;
 var playerTank;
+var fwd = false;
+var lft = false;
+var bck = false;
+var rgt = false;
 
 paper.install(window);
 
 /*
 Called on each pressed key
 */
-function input(e)
+
+function press(e)
 {
 	switch(e.keyCode)
 	{
 		case constants.UP:
-		player.x+=speed*Math.cos(player.newAngle*(Math.PI/180));
-		player.y+=speed*Math.sin(player.newAngle*(Math.PI/180));
+		if(!bck)
+			fwd = true;
 		break;
 		case constants.DOWN:
-		player.x-=speed*Math.cos(player.newAngle*(Math.PI/180));
-		player.y-=speed*Math.sin(player.newAngle*(Math.PI/180));
+		if(!fwd)
+			bck = true;
 		break;
 		case constants.RIGHT:
-		player.newAngle+=angularSpeed;
+		if(!lft)
+			rgt = true;
 		break;
 		case constants.LEFT:
-		player.newAngle-=angularSpeed;
+		if(!rgt)
+			lft = true;
 		break;
 	}
 }
 
+function release(e)
+{
+	switch(e.keyCode)
+	{
+		case constants.UP:
+		fwd = false;
+		break;
+		case constants.DOWN:
+		bck = false;
+		break;
+		case constants.RIGHT:
+		rgt = false;
+		break;
+		case constants.LEFT:
+		lft = false;
+		break;
+	}
+}
+
+
 function draw()
 {
+	if(fwd)
+	{
+		player.x+=speed*Math.cos(player.newAngle*(Math.PI/180));
+		player.y+=speed*Math.sin(player.newAngle*(Math.PI/180));
+	}
+	else if(bck)
+	{
+		player.x-=speed*Math.cos(player.newAngle*(Math.PI/180));
+		player.y-=speed*Math.sin(player.newAngle*(Math.PI/180));
+	}
+	if(rgt)
+	{
+		document.getElementById('status').innerHTML += " - ";
+		player.newAngle+=angularSpeed;
+	}
+	else if(lft)
+	{
+		document.getElementById('status').innerHTML += " + ";
+		player.newAngle-=angularSpeed;
+	}
 	playerTank.position = new Point(player.x,player.y);
 	playerTank.rotate(player.newAngle-player.oldAngle);
 	player.oldAngle = player.newAngle;
-	document.getElementById('status').innerHTML = player.oldAngle;
 }
 
 function newGame()
@@ -48,7 +94,8 @@ function newGame()
 	//TODO generate a grid & initial position of for now only 1 player.
 	playerTank = new Path.Rectangle([player.x-20, player.y-10], [40, 20]);
     playerTank.strokeColor = 'black';
-	document.addEventListener("keypress", input);
+	document.addEventListener("keydown", press);
+	document.addEventListener("keyup", release);
 	view.onFrame = draw;
 }
 
