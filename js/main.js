@@ -15,10 +15,6 @@ var rgt = false;
 
 paper.install(window);
 
-/*
-Called on each pressed key
-*/
-
 function press(e)
 {
 	switch(e.keyCode)
@@ -76,12 +72,10 @@ function draw()
 	}
 	if(rgt)
 	{
-		document.getElementById('status').innerHTML += " - ";
 		player.newAngle+=angularSpeed;
 	}
 	else if(lft)
 	{
-		document.getElementById('status').innerHTML += " + ";
 		player.newAngle-=angularSpeed;
 	}
 	playerTank.position = new Point(player.x,player.y);
