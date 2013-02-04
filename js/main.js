@@ -3,7 +3,7 @@ var context;
 var pixelWidth = 800;
 var pixelHeight = 600;
 var borderStyle = "thick solid";
-var player = {x:30,y:30,oldAngle:0,newAngle:0};
+var player = {x:30,y:30,angle:0};
 var constants = {LEFT:37,UP:38,RIGHT:39,DOWN:40};
 var speed = 2;
 var angularSpeed = 2;
@@ -62,25 +62,25 @@ function draw()
 {
 	if(fwd)
 	{
-		player.x+=speed*Math.cos(player.newAngle*(Math.PI/180));
-		player.y+=speed*Math.sin(player.newAngle*(Math.PI/180));
+		player.x+=speed*Math.cos(player.angle*(Math.PI/180));
+		player.y+=speed*Math.sin(player.angle*(Math.PI/180));
 	}
 	else if(bck)
 	{
-		player.x-=speed*Math.cos(player.newAngle*(Math.PI/180));
-		player.y-=speed*Math.sin(player.newAngle*(Math.PI/180));
+		player.x-=speed*Math.cos(player.angle*(Math.PI/180));
+		player.y-=speed*Math.sin(player.angle*(Math.PI/180));
 	}
 	if(rgt)
 	{
-		player.newAngle+=angularSpeed;
+		player.angle+=angularSpeed;
+		playerTank.rotate(angularSpeed);
 	}
 	else if(lft)
 	{
-		player.newAngle-=angularSpeed;
+		player.angle-=angularSpeed;
+		playerTank.rotate(-angularSpeed);
 	}
 	playerTank.position = new Point(player.x,player.y);
-	playerTank.rotate(player.newAngle-player.oldAngle);
-	player.oldAngle = player.newAngle;
 }
 
 function newGame()
