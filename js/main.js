@@ -4,7 +4,8 @@ var pixelWidth = 800;
 var pixelHeight = 600;
 var borderStyle = "thick solid";
 var player = {x:30,y:30,angle:0};
-var constants = {LEFT:37,UP:38,RIGHT:39,DOWN:40};
+var tank = {width:40,height:20};
+var constants = {LEFT:37,UP:38,RIGHT:39,DOWN:40,DEGRAD:(Math.PI/180)};
 var speed = 2;
 var angularSpeed = 2;
 var playerTank;
@@ -57,18 +58,17 @@ function release(e)
 	}
 }
 
-
 function draw()
 {
 	if(fwd)
 	{
-		player.x+=speed*Math.cos(player.angle*(Math.PI/180));
-		player.y+=speed*Math.sin(player.angle*(Math.PI/180));
+		player.x+=speed*Math.cos(player.angle*constants.DEGRAD);
+		player.y+=speed*Math.sin(player.angle*constants.DEGRAD);
 	}
 	else if(bck)
 	{
-		player.x-=speed*Math.cos(player.angle*(Math.PI/180));
-		player.y-=speed*Math.sin(player.angle*(Math.PI/180));
+		player.x-=speed*Math.cos(player.angle*constants.DEGRAD);
+		player.y-=speed*Math.sin(player.angle*constants.DEGRAD);
 	}
 	if(rgt)
 	{
@@ -83,14 +83,53 @@ function draw()
 	playerTank.position = new Point(player.x,player.y);
 }
 
+// stack overflow drawing grid help.
+function drawGridLines(num_rectangles_wide, num_rectangles_tall, boundingRect) {
+    var width_per_rectangle = boundingRect.width / num_rectangles_wide;
+    var height_per_rectangle = boundingRect.height / num_rectangles_tall;
+    for (var i = 0; i <= num_rectangles_wide; i++) {
+        var xPos = boundingRect.left + i * width_per_rectangle;
+        var topPoint = new paper.Point(xPos, boundingRect.top);
+        var bottomPoint = new paper.Point(xPos, boundingRect.bottom);
+        var aLine = new paper.Path.Line(topPoint, bottomPoint);
+        aLine.strokeColor = 'black';
+    }
+    for (var i = 0; i <= num_rectangles_tall; i++) {
+        var yPos = boundingRect.top + i * height_per_rectangle;
+        var leftPoint = new paper.Point(boundingRect.left, yPos);
+        var rightPoint = new paper.Point(boundingRect.right, yPos);
+        var aLine = new paper.Path.Line(leftPoint, rightPoint);
+        aLine.strokeColor = 'black';
+    }
+}
+
+var drawGridRects = function(num_rectangles_wide, num_rectangles_tall, boundingRect) {
+    var width_per_rectangle = boundingRect.width / num_rectangles_wide;
+    var height_per_rectangle = boundingRect.height / num_rectangles_tall;
+    for (var i = 0; i < num_rectangles_wide; i++) {
+        for (var j = 0; j < num_rectangles_tall; j++) {
+            var aRect = new paper.Path.Rectangle(boundingRect.left + i * width_per_rectangle, boundingRect.top + j * height_per_rectangle, width_per_rectangle, height_per_rectangle);
+            aRect.strokeColor = 'white';
+            aRect.fillColor = 'black';
+        }
+    }
+}
+
 function newGame()
 {
 	//TODO generate a grid & initial position of for now only 1 player.
-	playerTank = new Path.Rectangle([player.x-20, player.y-10], [40, 20]);
+	drawGridRects(8 , 8 , paper.view.bounds);
+	playerTank = new Path.Rectangle([player.x-(tank.width/2) + 1, player.y-(tank.height/2)], [tank.width, tank.height]);
     playerTank.strokeColor = 'black';
+    playerTank.fillColor = 'red';
 	document.addEventListener("keydown", press);
 	document.addEventListener("keyup", release);
 	view.onFrame = draw;
+
+	
+	
+	//drawGridLines(7, 7, paper.view.bounds);
+
 }
 
 window.onload = function initGame()
