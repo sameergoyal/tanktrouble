@@ -1,0 +1,11 @@
+canvas
+{
+	border:solid thick;
+	float:left;
+}
+
+p
+{
+	padding-left:100px;
+	float:left;
+}
