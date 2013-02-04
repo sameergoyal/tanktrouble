@@ -4,7 +4,8 @@ var pixelWidth = 800;
 var pixelHeight = 600;
 var borderStyle = "thick solid";
 var player = {x:30,y:30,angle:0};
-var constants = {LEFT:37,UP:38,RIGHT:39,DOWN:40};
+var tank = {width:40,height:20};
+var constants = {LEFT:37,UP:38,RIGHT:39,DOWN:40,DEGRAD:(Math.PI/180)};
 var speed = 2;
 var angularSpeed = 2;
 var playerTank;
@@ -57,18 +58,17 @@ function release(e)
 	}
 }
 
-
 function draw()
 {
 	if(fwd)
 	{
-		player.x+=speed*Math.cos(player.angle*(Math.PI/180));
-		player.y+=speed*Math.sin(player.angle*(Math.PI/180));
+		player.x+=speed*Math.cos(player.angle*constants.DEGRAD);
+		player.y+=speed*Math.sin(player.angle*constants.DEGRAD);
 	}
 	else if(bck)
 	{
-		player.x-=speed*Math.cos(player.angle*(Math.PI/180));
-		player.y-=speed*Math.sin(player.angle*(Math.PI/180));
+		player.x-=speed*Math.cos(player.angle*constants.DEGRAD);
+		player.y-=speed*Math.sin(player.angle*constants.DEGRAD);
 	}
 	if(rgt)
 	{
@@ -86,7 +86,7 @@ function draw()
 function newGame()
 {
 	//TODO generate a grid & initial position of for now only 1 player.
-	playerTank = new Path.Rectangle([player.x-20, player.y-10], [40, 20]);
+	playerTank = new Path.Rectangle([player.x-(tank.width/2), player.y-(tank.height/2)], [tank.width, tank.height]);
     playerTank.strokeColor = 'black';
 	document.addEventListener("keydown", press);
 	document.addEventListener("keyup", release);
