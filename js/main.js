@@ -118,8 +118,12 @@ var drawGridRects = function(num_rectangles_wide, num_rectangles_tall, boundingR
 function newGame()
 {
 	//TODO generate a grid & initial position of for now only 1 player.
+<<<<<<< HEAD
 	drawGridRects(8 , 8 , paper.view.bounds);
 	playerTank = new Path.Rectangle([player.x-(tank.width/2) + 1, player.y-(tank.height/2)], [tank.width, tank.height]);
+=======
+	playerTank = new Path.Rectangle([player.x-(tank.width/2), player.y-(tank.height/2)], [tank.width, tank.height]);
+>>>>>>> e107f61ecaeadf343f5f1271081ba51fc6399dfe
     playerTank.strokeColor = 'black';
     playerTank.fillColor = 'red';
 	document.addEventListener("keydown", press);
