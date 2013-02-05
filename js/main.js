@@ -93,7 +93,7 @@ function draw()
 	playerTank.position = new Point(player.x,player.y);
 }
 
-
+// draws lines on the screen.
 function drawGridLines(num_rectangles_wide, num_rectangles_tall, boundingRect ) {
     var width_per_rectangle = boundingRect.width / num_rectangles_wide;
     var height_per_rectangle = boundingRect.height / num_rectangles_tall;
@@ -113,6 +113,8 @@ function drawGridLines(num_rectangles_wide, num_rectangles_tall, boundingRect ) 
     }
 }
 
+
+// this draws rectangles on the screen. 
 var drawGridRects = function(num_rectangles_wide, num_rectangles_tall, boundingRect) {
     var width_per_rectangle = boundingRect.width / num_rectangles_wide;
     var height_per_rectangle = boundingRect.height / num_rectangles_tall;
