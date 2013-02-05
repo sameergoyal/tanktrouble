@@ -14,9 +14,11 @@ var lft = false;
 var bck = false;
 var rgt = false;
 
+var horGrid;
+var verGrid;
 paper.install(window);
 
-//var array2d = new Boolean [,];
+
 
 
 
@@ -114,7 +116,45 @@ function drawGridLines(num_rectangles_wide, num_rectangles_tall, boundingRect ) 
 }
 
 
-// this draws rectangles on the screen. 
+function myGridLines(num_rectangles_wide, num_rectangles_tall, boundingRect ) {
+    var width_per_rectangle = boundingRect.width / num_rectangles_wide;
+    var height_per_rectangle = boundingRect.height / num_rectangles_tall;
+
+// horizontal lines.    
+    for(var i = 0 ; i < num_rectangles_tall ; i++)
+    {
+    	for(var j = 0 ; j < num_rectangles_wide ; j++)
+    	{
+    		if(i == num_rectangles_tall -1) continue;
+    		if(j == num_rectangles_wide -1) continue;
+    		if(horGrid[i][j] == true) // draw a horizontal line from jth to j+1th column of the ith row.
+    		{
+    			var yPos = boundingRect.top + i * height_per_rectangle;
+    			var leftPoint = new paper.Point(boundingRect.left + j*width_per_rectangle, yPos);
+    			var rightPoint = new paper.Point(boundingRect.left + (j+1)*width_per_rectangle, yPos);
+    			var aLine = new paper.Path.Line(leftPoint, rightPoint);
+        		aLine.strokeColor = 'black';
+
+
+    		}
+    		if(verGrid[i][j] == true) // draw a vertical line from ith to i+1th row of the jth column.
+    		{
+    			var xPos = boundingRect.left + j* width_per_rectangle;
+      			var topPoint = new paper.Point(xPos, boundingRect.top + i*height_per_rectangle);
+        		var bottomPoint = new paper.Point(xPos, boundingRect.top + (i+1)*height_per_rectangle);
+        		var aLine = new paper.Path.Line(topPoint, bottomPoint);
+        		aLine.strokeColor = 'black';
+
+
+    		}
+
+    	}
+    }
+
+}
+
+
+// this draws rectangles on the screen. pretty useless.
 var drawGridRects = function(num_rectangles_wide, num_rectangles_tall, boundingRect) {
     var width_per_rectangle = boundingRect.width / num_rectangles_wide;
     var height_per_rectangle = boundingRect.height / num_rectangles_tall;
@@ -132,26 +172,16 @@ function newGame()
 	//TODO generate a grid & initial position of for now only 1 player.
 
 	//drawGridRects(8 , 8 , paper.view.bounds);
-	playerTank = new Path.Rectangle([player.x-(tank.width/2) + 1, player.y-(tank.height/2)], [tank.width, tank.height]);
-
-	playerTank = new Path.Rectangle([player.x-(tank.width/2), player.y-(tank.height/2)], [tank.width, tank.height]);
-
-    playerTank.strokeColor = 'black';
-    playerTank.fillColor = 'red';
-	document.addEventListener("keydown", press);
-	document.addEventListener("keyup", release);
-	view.onFrame = draw;
-
-	var horGrid = new Array(8);
-	var verGrid = new Array(8);
-	for (var i = horGrid.length - 1; i >= 0; i--) { 
+	
+	horGrid = new Array(8);
+	verGrid = new Array(8);
+	for (var i = 0; i < horGrid.length; i++) { 
 			horGrid[i] = new Array(8);
 			verGrid[i] = new Array(8);
 		};		
 
-	// fill with random values;
-	
-	for(var i = 0 ; i < horGrid.length ; i++)
+		
+	for(var i = 0 ; i < horGrid.length; i++)
 	{
 		for(var j= 0 ; j < horGrid.length ; j++)
 		{
@@ -160,9 +190,18 @@ function newGame()
 		}
 	}
 
+	// draw grid first then the tank
+	//drawGridLines(7, 7, paper.view.bounds);
+	myGridLines(8 , 8 , paper.view.bounds);
+	//
+	playerTank = new Path.Rectangle([player.x-(tank.width/2) + 1, player.y-(tank.height/2)], [tank.width, tank.height]);
+	playerTank = new Path.Rectangle([player.x-(tank.width/2), player.y-(tank.height/2)], [tank.width, tank.height]);
+    playerTank.strokeColor = 'black';
+    playerTank.fillColor = 'red';
 
-
-	drawGridLines(7, 7, paper.view.bounds);
+	document.addEventListener("keydown", press);
+	document.addEventListener("keyup", release);
+	view.onFrame = draw;
 
 }
 
