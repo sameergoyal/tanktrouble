@@ -16,6 +16,16 @@ var rgt = false;
 
 paper.install(window);
 
+//var array2d = new Boolean [,];
+
+
+
+function getRandomBool()
+{
+	return Math.random() >= 0.5;
+}
+
+
 function press(e)
 {
 	switch(e.keyCode)
@@ -83,8 +93,8 @@ function draw()
 	playerTank.position = new Point(player.x,player.y);
 }
 
-// stack overflow drawing grid help.
-function drawGridLines(num_rectangles_wide, num_rectangles_tall, boundingRect) {
+
+function drawGridLines(num_rectangles_wide, num_rectangles_tall, boundingRect ) {
     var width_per_rectangle = boundingRect.width / num_rectangles_wide;
     var height_per_rectangle = boundingRect.height / num_rectangles_tall;
     for (var i = 0; i <= num_rectangles_wide; i++) {
@@ -118,21 +128,39 @@ var drawGridRects = function(num_rectangles_wide, num_rectangles_tall, boundingR
 function newGame()
 {
 	//TODO generate a grid & initial position of for now only 1 player.
-<<<<<<< HEAD
-	drawGridRects(8 , 8 , paper.view.bounds);
+
+	//drawGridRects(8 , 8 , paper.view.bounds);
 	playerTank = new Path.Rectangle([player.x-(tank.width/2) + 1, player.y-(tank.height/2)], [tank.width, tank.height]);
-=======
+
 	playerTank = new Path.Rectangle([player.x-(tank.width/2), player.y-(tank.height/2)], [tank.width, tank.height]);
->>>>>>> e107f61ecaeadf343f5f1271081ba51fc6399dfe
+
     playerTank.strokeColor = 'black';
     playerTank.fillColor = 'red';
 	document.addEventListener("keydown", press);
 	document.addEventListener("keyup", release);
 	view.onFrame = draw;
 
+	var horGrid = new Array(8);
+	var verGrid = new Array(8);
+	for (var i = horGrid.length - 1; i >= 0; i--) { 
+			horGrid[i] = new Array(8);
+			verGrid[i] = new Array(8);
+		};		
+
+	// fill with random values;
 	
-	
-	//drawGridLines(7, 7, paper.view.bounds);
+	for(var i = 0 ; i < horGrid.length ; i++)
+	{
+		for(var j= 0 ; j < horGrid.length ; j++)
+		{
+			horGrid[i][j] = getRandomBool();
+			verGrid[i][j] = getRandomBool();
+		}
+	}
+
+
+
+	drawGridLines(7, 7, paper.view.bounds);
 
 }
 
