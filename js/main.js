@@ -16,7 +16,8 @@ var rgt = false;
 
 var horGrid;
 var verGrid;
-var lines;
+var hLines;
+var vLines;
 var boundingRect;
 var maxWidth;
 var maxHeight;
@@ -85,51 +86,50 @@ function isOk () {
       var i2 = Math.ceil(player.x / width_per_rectangle);
 
       var j1 =  Math.floor(player.y / height_per_rectangle);
-      var j2 = Math.floor(player.y / height_per_rectangle);
+      var j2 = Math.ceil(player.y / height_per_rectangle);
 
-      //alert(i1);
-      //alert(i2);
+      
 
       if(horGrid[i1][j1])
       {
-      	if(playerTank.bounds.intersects(lines[i1][j1].bounds)) return false;
+      	if(playerTank.bounds.intersects(hLines[i1][j1].bounds)) return false;
 
       }
        if(horGrid[i1][j2])
       {
-      	if(playerTank.bounds.intersects(lines[i1][j2].bounds)) return false;
+      	if(playerTank.bounds.intersects(hLines[i1][j2].bounds)) return false;
 
       }
       if(horGrid[i2][j1])
       {
-      	if(playerTank.bounds.intersects(lines[i2][j1].bounds)) return false;
+      	if(playerTank.bounds.intersects(hLines[i2][j1].bounds)) return false;
 
       }
       if(horGrid[i2][j2])
       {
-      	if(playerTank.bounds.intersects(lines[i2][j2]).bounds) return false;
+      	if(playerTank.bounds.intersects(hLines[i2][j2]).bounds) return false;
 
       }
 
 
       if(verGrid[i1][j1])
       {
-      	if(playerTank.bounds.intersects(lines[i1][j1]).bounds) return false;
+      	if(playerTank.bounds.intersects(vLines[i1][j1]).bounds) return false;
 
       }
        if(verGrid[i1][j2])
       {
-      	if(playerTank.bounds.intersects(lines[i1][j2]).bounds) return false;
+      	if(playerTank.bounds.intersects(vLines[i1][j2]).bounds) return false;
 
       }
       if(verGrid[i2][j1])
       {
-      	if(playerTank.bounds.intersects(lines[i2][j1]).bounds) return false;
+      	if(playerTank.bounds.intersects(vLines[i2][j1]).bounds) return false;
 
       }
       if(verGrid[i2][j2])
       {
-      	if(playerTank.bounds.intersects(lines[i2][j2]).bounds) return false;
+      	if(playerTank.bounds.intersects(vLines[i2][j2]).bounds) return false;
 
       }
 
@@ -139,6 +139,9 @@ function isOk () {
 
 function draw()
 {
+	var oldx , oldy;
+	oldx = player.x;
+	oldy = player.y;
 	if(fwd)
 	{
 		player.x+=speed*Math.cos(player.angle*constants.DEGRAD);
@@ -159,9 +162,12 @@ function draw()
 		player.angle-=angularSpeed;
 		playerTank.rotate(-angularSpeed);
 	}
-	if(!isOk()) {
+
+	if(!isOk())
+	{
 		alert("Dead");
-		return;
+		
+
 	}
 
 	playerTank.position = new Point(player.x,player.y);
@@ -189,10 +195,10 @@ function myGridLines( ) {
     			var leftPoint = new paper.Point(boundingRect.left + j*width_per_rectangle, yPos);
     			var rightPoint = new paper.Point(boundingRect.left + (j+1)*width_per_rectangle, yPos);
     			
-        		lines[i][j] = new paper.Path.Line(leftPoint, rightPoint);
-        		lines[i][j].strokeColor = 'black';
-        		lines[i][j].strokeWidth = 10;
-        		lines[i][j].smooth();
+        		hLines[i][j] = new paper.Path.Line(leftPoint, rightPoint);
+        		hLines[i][j].strokeColor = 'black';
+        		hLines[i][j].strokeWidth = 10;
+        		hLines[i][j].smooth();
 
 
     		}
@@ -204,10 +210,10 @@ function myGridLines( ) {
         		var bottomPoint = new paper.Point(xPos, boundingRect.top + (i+1)*height_per_rectangle);
         		
 
-        		lines[i][j] = new paper.Path.Line(topPoint, bottomPoint);
-        		lines[i][j].strokeColor = 'black';
-        		lines[i][j].strokeWidth = 10;
-        		lines[i][j].smooth();
+        		vLines[i][j] = new paper.Path.Line(topPoint, bottomPoint);
+        		vLines[i][j].strokeColor = 'black';
+        		vLines[i][j].strokeWidth = 10;
+        		vLines[i][j].smooth();
 
 
     		}
@@ -222,11 +228,13 @@ function createRandomBoolGrids()
 {
 	horGrid = new Array(8);
 	verGrid = new Array(8);
-	lines = new Array(8);
+	hLines = new Array(8);
+	vLines = new Array(8);
 	for (var i = 0; i < horGrid.length; i++) { 
 			horGrid[i] = new Array(8);
 			verGrid[i] = new Array(8);
-			lines[i] = new Array(8);
+			vLines[i] = new Array(8);
+			hLines[i] = new Array(8);
 		};		
 
 
