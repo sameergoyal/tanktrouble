@@ -97,6 +97,7 @@ function isOk () {
 				nrgt = true;
 			else
 				nlft = true;
+			return;
       }
       if(horGrid[i2][j1] && playerTank.bounds.intersects(hLines[i2][j1].bounds))
 	  {
@@ -108,6 +109,7 @@ function isOk () {
 				nrgt = true;
 			else
 				nlft = true;
+			return;
 	  }
       if(verGrid[i1][j1] && playerTank.bounds.intersects(vLines[i1][j1].bounds))
 	  {
@@ -119,6 +121,7 @@ function isOk () {
 				nrgt = true;
 			else
 				nlft = true;
+			return;
       }
       if(verGrid[i1][j2] && playerTank.bounds.intersects(vLines[i1][j2].bounds))
 	  {
@@ -130,6 +133,7 @@ function isOk () {
 				nrgt = true;
 			else
 				nlft = true;
+			return;
       }
 }
 
