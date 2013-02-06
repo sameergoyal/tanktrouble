@@ -101,9 +101,9 @@ function myGridLines(num_rectangles_wide, num_rectangles_tall, boundingRect ) {
     var height_per_rectangle = boundingRect.height / num_rectangles_tall;
 
 
-    for(var i = 0 ;i!=0 && i!=num_rectangles_tall -1 && i < num_rectangles_tall ; i++)
+    for(var i = 1 ; i < num_rectangles_tall  ; i++)
     {
-    	for(var j = 0 ;j!=0 && j!=num_rectangles_wide -1j < num_rectangles_wide ; j++)
+    	for(var j = 0 ; j<num_rectangles_wide ; j++)
     	{
     	
     		if(horGrid[i][j] == true) // draw a horizontal line from jth to j+1th column of the ith row.
@@ -139,7 +139,7 @@ function myGridLines(num_rectangles_wide, num_rectangles_tall, boundingRect ) {
 }
 
 
-function createRandomGrids()
+function createRandomBoolGrids()
 {
 	horGrid = new Array(8);
 	verGrid = new Array(8);
@@ -166,7 +166,24 @@ function createRandomGrids()
 function newGame()
 {
 	
-	createRandomBoolGrids();
+	//createRandomBoolGrids();
+	horGrid = new Array(8);
+	verGrid = new Array(8);
+
+	for (var i = 0; i < horGrid.length; i++) { 
+			horGrid[i] = new Array(8);
+			verGrid[i] = new Array(8);
+		};		
+
+
+	for(var i = 0 ; i < horGrid.length; i++)
+	{
+		for(var j= 0 ; j < horGrid.length ; j++)
+		{
+			horGrid[i][j] = getRandomBool();
+			verGrid[i][j] = getRandomBool();
+		}
+	};
 	
 	myGridLines(8 , 8 , paper.view.bounds);
 	
