@@ -101,15 +101,14 @@ function myGridLines(num_rectangles_wide, num_rectangles_tall, boundingRect ) {
     var height_per_rectangle = boundingRect.height / num_rectangles_tall;
 
 
-    for(var i = 0 ; i < num_rectangles_tall ; i++)
+    for(var i = 0 ;i!=0 && i!=num_rectangles_tall -1 && i < num_rectangles_tall ; i++)
     {
-    	for(var j = 0 ; j < num_rectangles_wide ; j++)
+    	for(var j = 0 ;j!=0 && j!=num_rectangles_wide -1j < num_rectangles_wide ; j++)
     	{
-    		if(i == num_rectangles_tall -1) continue;
-    		if(j == num_rectangles_wide -1) continue;
+    	
     		if(horGrid[i][j] == true) // draw a horizontal line from jth to j+1th column of the ith row.
     		{
-    			if(i == 0) continue;
+    	
      			var yPos = boundingRect.top + i * height_per_rectangle;
     			var leftPoint = new paper.Point(boundingRect.left + j*width_per_rectangle, yPos);
     			var rightPoint = new paper.Point(boundingRect.left + (j+1)*width_per_rectangle, yPos);
@@ -122,7 +121,7 @@ function myGridLines(num_rectangles_wide, num_rectangles_tall, boundingRect ) {
     		}
     		if(verGrid[i][j] == true) // draw a vertical line from ith to i+1th row of the jth column.
     		{
-    			if(j == 0) continue;
+    	
     			var xPos = boundingRect.left + j* width_per_rectangle;
       			var topPoint = new paper.Point(xPos, boundingRect.top + i*height_per_rectangle);
         		var bottomPoint = new paper.Point(xPos, boundingRect.top + (i+1)*height_per_rectangle);
@@ -140,19 +139,17 @@ function myGridLines(num_rectangles_wide, num_rectangles_tall, boundingRect ) {
 }
 
 
-
-
-function newGame()
+function createRandomGrids()
 {
-
 	horGrid = new Array(8);
 	verGrid = new Array(8);
+
 	for (var i = 0; i < horGrid.length; i++) { 
 			horGrid[i] = new Array(8);
 			verGrid[i] = new Array(8);
 		};		
 
-		
+
 	for(var i = 0 ; i < horGrid.length; i++)
 	{
 		for(var j= 0 ; j < horGrid.length ; j++)
@@ -162,6 +159,14 @@ function newGame()
 		}
 	};
 
+}
+
+
+
+function newGame()
+{
+	
+	createRandomBoolGrids();
 	
 	myGridLines(8 , 8 , paper.view.bounds);
 	
