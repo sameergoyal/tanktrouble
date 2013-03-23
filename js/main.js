@@ -100,7 +100,13 @@ function tankCol () {
  
       var i1 =  Math.floor(tank.y / height_per_rectangle);
       var i2 = Math.ceil(tank.y / height_per_rectangle);
-          
+
+      var i0 = i1-1;
+      var j0 = j1-1;
+       
+      document.getElementById('status').innerHTML = player.angle;
+
+    
       if(horGrid[i1][j1] && playerTank.bounds.intersects(hLines[i1][j1].bounds))
           {  
                         if(player.angle>180)
@@ -125,6 +131,7 @@ function tankCol () {
                                 nlft = true;
                         return;
           }
+
       if(verGrid[i1][j1] && playerTank.bounds.intersects(vLines[i1][j1].bounds))
           {
                         if(player.angle>90 && player.angle<270)
@@ -138,7 +145,8 @@ function tankCol () {
                         return;
       }
       if(verGrid[i1][j2] && playerTank.bounds.intersects(vLines[i1][j2].bounds))
-          {
+      {
+
                         if(player.angle>90 && player.angle<270)
                                 nbck = true;
                         else
@@ -149,11 +157,59 @@ function tankCol () {
                                 nlft = true;
                         return;
       }
+      if(verGrid[i2][j1] && playerTank.bounds.intersects(vLines[i2][j1].bounds))
+      {
+                       if(player.angle>180)
+                                nbck = true;
+                        else
+                                nfwd = true;
+                        if(player.angle<90 || (player.angle>180 && player.angle<270))
+                                nrgt = true;
+                        else
+                                nlft = true;
+                        return; 
+      }
+      if(verGrid[i2][j2] && playerTank.bounds.intersects(vLines[i2][j2].bounds))
+      {
+                       if(player.angle>180)
+                                nbck = true;
+                        else
+                                nfwd = true;
+                        if(player.angle<90 || (player.angle>180 && player.angle<270))
+                                nrgt = true;
+                        else
+                                nlft = true;
+                        return; 
+      }
+      if(i0>=0 && verGrid[i0][j1] && playerTank.bounds.intersects(vLines[i0][j1].bounds))
+      {
+                       if(player.angle<180)
+                                nbck = true;
+                        else
+                                nfwd = true;
+                        if(player.angle<90 || (player.angle>180 && player.angle<270))
+                                nrgt = true;
+                        else
+                                nlft = true;
+                        return; 
+      }
+      if(i0>=0 && verGrid[i0][j2] && playerTank.bounds.intersects(vLines[i0][j2].bounds))
+      {
+                       if(player.angle<180)
+                                nbck = true;
+                        else
+                                nfwd = true;
+                        if(player.angle<90 || (player.angle>180 && player.angle<270))
+                                nrgt = true;
+                        else
+                                nlft = true;
+                        return; 
+      }
 }
  
 function bulletCol(i)
 {
-        var j1 = Math.floor(bullets[i].position.x / width_per_rectangle);
+    var j1 = Math.floor(bullets[i].position.x / width_per_rectangle);
     var j2 = Math.ceil(bullets[i].position.x / width_per_rectangle);
  
     var i1 =  Math.floor(bullets[i].position.y / height_per_rectangle);
