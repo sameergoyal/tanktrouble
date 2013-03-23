@@ -132,6 +132,56 @@ function tankCol () {
                         return;
           }
 
+       if(horGrid[i1][j2] && playerTank.bounds.intersects(hLines[i1][j2].bounds))
+          {  
+                        if(player.angle<90 || (player.angle>270))
+                                nfwd = true;
+                        else
+                                nbck = true;
+                        if(player.angle<90 || (player.angle>180 && player.angle<270))
+                                nlft = true;
+                        else
+                                nrgt = true;
+                        return;
+      }
+
+      if(horGrid[i2][j2] && playerTank.bounds.intersects(hLines[i2][j2].bounds))
+          {
+                        if(player.angle<90 || (player.angle>270))
+                                nfwd = true;
+                        else
+                                nbck = true;
+                        if(player.angle<90 || (player.angle>180 && player.angle<270))
+                                nlft = true;
+                        else
+                                nrgt = true;
+                        return;
+          } 
+    if(j0>=0 && horGrid[i1][j0] && playerTank.bounds.intersects(hLines[i1][j0].bounds))
+          {  
+                        if(player.angle<90 || (player.angle>270))
+                                nbck = true;
+                        else
+                                nfwd = true;
+                        if(player.angle<90 || (player.angle>180 && player.angle<270))
+                                nlft = true;
+                        else
+                                nrgt = true;
+                        return;
+      }
+      
+      if(j0>=0 && horGrid[i2][j0] && playerTank.bounds.intersects(hLines[i2][j0].bounds))
+          {
+                        if(player.angle<90 || (player.angle>270))
+                                nbck = true;
+                        else
+                                nfwd = true;
+                        if(player.angle<90 || (player.angle>180 && player.angle<270))
+                                nlft = true;
+                        else
+                                nrgt = true;
+                        return;
+          } 
       if(verGrid[i1][j1] && playerTank.bounds.intersects(vLines[i1][j1].bounds))
           {
                         if(player.angle>90 && player.angle<270)
