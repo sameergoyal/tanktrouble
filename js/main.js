@@ -7,33 +7,48 @@ var arenaHeight = 600;
 var arenaWidth = 800;
 var wallDensity = 0.55;
 var cursors;
+var keyboard;
 var tankSpeed = 100;
 var rotationSpeed = 2;
+var bulletDelay = 10;
+var fireKey = 32;
+var bulletSpeed = 200;
+var playerBullets;
 
 function getRandomBool()
 {
 	return Math.random() >= wallDensity;
 }
 
+function vBound(i) {
+	return i === 0 || i === maxHlines;
+}
+
+function hBound(j) {
+	return j === 0 || j === maxVlines;
+}
+
 function generateRandomGrid() {
-	horGrid = new Array(maxHlines-1);
-	verGrid = new Array(maxVlines-1);
-	hLines = new Array(maxHlines-1);
-	vLines = new Array(maxVlines-1);
-	for (var i = 0; i < maxHlines-1; i++) {
-		horGrid[i] = new Array(maxHlines-1);
-		hLines[i] = new Array(maxHlines-1);
+	horGrid = new Array(maxHlines+1);
+	verGrid = new Array(maxVlines+1);
+	hLines = new Array(maxHlines+1);
+	vLines = new Array(maxVlines+1);
+	for (var i = 0; i < maxHlines+1; i++) {
+		horGrid[i] = new Array(maxHlines+1);
+		hLines[i] = new Array(maxHlines+1);
 	};
-	for(var i = 0; i < maxVlines-1; i++) {
-		verGrid[i] = new Array(maxVlines-1);
-		vLines[i] = new Array(maxVlines-1);
+	for(var i = 0; i < maxVlines+1; i++) {
+		verGrid[i] = new Array(maxVlines+1);
+		vLines[i] = new Array(maxVlines+1);
 	}
-	for(var i = 0; i < maxHlines-1; i++)
+	for(var i = 0; i < maxHlines+1; i++)
 	{
-		for(var j = 0; j < maxVlines-1 ; j++)
+		for(var j = 0; j < maxVlines+1; j++)
 		{
 			horGrid[i][j] = getRandomBool();
 			verGrid[i][j] = getRandomBool();
+			if(vBound(i)) horGrid[i][j] = 1;
+			if(hBound(j)) verGrid[i][j] = 1;
 		}
 	};
 }
@@ -41,18 +56,18 @@ function generateRandomGrid() {
 function drawGrid() {
 	widthPerRect = arenaWidth / maxVlines;
 	heightPerRect = arenaHeight / maxHlines;
-	for(var i = 0; i < maxHlines-1; i++)
+	for(var i = 0; i < maxHlines+1; i++)
 	{
-		for(var j = 0; j< maxVlines-1; j++)
+		for(var j = 0; j< maxVlines+1; j++)
 		{
 			if(horGrid[i][j] == true)
 			{
-				hLines[i][j] = grid.create(widthPerRect*j, (heightPerRect*(i+1))-1, 'hLine');
+				hLines[i][j] = grid.create(widthPerRect*j, (heightPerRect*i)-1, 'hLine');
 				hLines[i][j].body.immovable = true;
 			}
 			if(verGrid[i][j] == true)
 			{
-				vLines[i][j] = grid.create((widthPerRect*(j+1))-1, heightPerRect*i, 'vLine');
+				vLines[i][j] = grid.create((widthPerRect*j)-1, heightPerRect*i, 'vLine');
 				vLines[i][j].body.immovable = true;
 			}
 		}
@@ -66,6 +81,31 @@ function createTank() {
 	player.anchor.set(0.5,0.5);
 }
 
+function createBullet(x, y, angle) {
+	var newBullet = playerBullets.create( x, y, 'bullet');
+	newBullet.body.collideWorldBounds = true;
+	newBullet.anchor.set(0.5,0.5);
+	newBullet.body.velocity = game.physics.arcade.velocityFromAngle(angle, bulletSpeed);
+	newBullet.angle = angle;
+}
+
+function bulletCollided(bullet, gridLine) {
+	var angle = Phaser.Math.radToDeg(bullet.body.angle);
+	if(bullet.body.touching.up) {
+		angle = -angle
+	}
+	if(bullet.body.touching.down) {
+		angle =  -angle;
+	}
+	if(bullet.body.touching.left) {
+		angle = angle > 0 ? 180 - angle : -180 - angle;
+	}
+	if(bullet.body.touching.right) {
+		angle = angle > 0 ? 180 - angle : -180 - angle;
+	}
+	bullet.body.velocity = game.physics.arcade.velocityFromAngle(angle, bulletSpeed);
+}
+
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, "arena", {
 	preload: preload,
 	create: create,
@@ -76,6 +116,7 @@ function preload() {
 	game.load.image('hLine', 'assets/hLine.jpg');
 	game.load.image('vLine', 'assets/vLine.jpg');
 	game.load.image('tank', 'assets/tank.jpg');
+	game.load.image('bullet', 'assets/bullet.png');
 }
 
 function create() {
@@ -87,16 +128,22 @@ function create() {
 	grid = game.add.group();
 	grid.enableBody = true;
 
+	playerBullets = game.add.group();
+	playerBullets.enableBody = true;
+
 	drawGrid();
 
 	createTank();
 
 	cursors = game.input.keyboard.createCursorKeys();
+	keyboard = game.input.keyboard;
+	keyboard.addKeyCapture(fireKey);
 	player.bringToTop();
 }
 
 function update() {
 	game.physics.arcade.collide(player, grid);
+	game.physics.arcade.collide(playerBullets, grid, bulletCollided);
 
 	player.body.velocity.x = 0;
 	player.body.velocity.y = 0;
@@ -112,5 +159,9 @@ function update() {
 		player.angle -= rotationSpeed;
 	} else if(cursors.right.isDown) {
 		player.angle += rotationSpeed;
+	}
+
+	if(keyboard.isDown(fireKey) && keyboard.justPressed(fireKey, bulletDelay) ) {
+		createBullet(player.position.x, player.position.y, player.body.rotation);
 	}
 }
