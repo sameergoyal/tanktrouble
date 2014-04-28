@@ -1,10 +1,14 @@
 var grid;
 var gridShape;
+var player;
 var maxHlines = 6;
 var maxVlines = 8;
 var arenaHeight = 600;
 var arenaWidth = 800;
 var wallDensity = 0.55;
+var cursors;
+var tankSpeed = 100;
+var rotationSpeed = 2;
 
 function getRandomBool()
 {
@@ -16,17 +20,17 @@ function generateRandomGrid() {
 	verGrid = new Array(maxVlines-1);
 	hLines = new Array(maxHlines-1);
 	vLines = new Array(maxVlines-1);
-	for (var i = 0; i < maxHlines; i++) {
+	for (var i = 0; i < maxHlines-1; i++) {
 		horGrid[i] = new Array(maxHlines-1);
 		hLines[i] = new Array(maxHlines-1);
 	};
-	for(var i = 0; i < maxVlines; i++) {
+	for(var i = 0; i < maxVlines-1; i++) {
 		verGrid[i] = new Array(maxVlines-1);
 		vLines[i] = new Array(maxVlines-1);
 	}
-	for(var i = 0; i < maxHlines; i++)
+	for(var i = 0; i < maxHlines-1; i++)
 	{
-		for(var j = 0; j < maxVlines ; j++)
+		for(var j = 0; j < maxVlines-1 ; j++)
 		{
 			horGrid[i][j] = getRandomBool();
 			verGrid[i][j] = getRandomBool();
@@ -37,26 +41,42 @@ function generateRandomGrid() {
 function drawGrid() {
 	widthPerRect = arenaWidth / maxVlines;
 	heightPerRect = arenaHeight / maxHlines;
-	for(var i = 0; i < maxHlines; i++)
+	for(var i = 0; i < maxHlines-1; i++)
 	{
-		for(var j = 0; j< maxVlines; j++)
+		for(var j = 0; j< maxVlines-1; j++)
 		{
 			if(horGrid[i][j] == true)
 			{
-				gridShape.drawRect(widthPerRect*j, heightPerRect*(i+1), widthPerRect, 2);
+				hLines[i][j] = grid.create(widthPerRect*j, (heightPerRect*(i+1))-1, 'hLine');
+				hLines[i][j].body.immovable = true;
 			}
 			if(verGrid[i][j] == true)
 			{
-				gridShape.drawRect(widthPerRect*(j+1), heightPerRect*i, 2, heightPerRect);
+				vLines[i][j] = grid.create((widthPerRect*(j+1))-1, heightPerRect*i, 'vLine');
+				vLines[i][j].body.immovable = true;
 			}
 		}
 	}
 }
 
+function createTank() {
+	player = game.add.sprite(20, 20, 'tank');
+	game.physics.arcade.enable(player);
+	player.body.collideWorldBounds = true;
+	player.anchor.set(0.5,0.5);
+}
+
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, "arena", {
+	preload: preload,
 	create: create,
 	update: update,
 }, false, true);
+
+function preload() {
+	game.load.image('hLine', 'assets/hLine.jpg');
+	game.load.image('vLine', 'assets/vLine.jpg');
+	game.load.image('tank', 'assets/tank.jpg');
+}
 
 function create() {
 	game.stage.backgroundColor = "#FFFFFF";
@@ -66,16 +86,31 @@ function create() {
 
 	grid = game.add.group();
 	grid.enableBody = true;
-	gridShape = game.add.graphics(0,0);
-	gridShape.lineStyle(1, 0x000000, 1);
-	gridShape.beginFill(0x000000, 1)
 
 	drawGrid();
 
-	grid.add(gridShape);
+	createTank();
 
+	cursors = game.input.keyboard.createCursorKeys();
+	player.bringToTop();
 }
 
 function update() {
+	game.physics.arcade.collide(player, grid);
 
+	player.body.velocity.x = 0;
+	player.body.velocity.y = 0;
+	player.body.angularVelocity = 0;
+
+	if(cursors.up.isDown) {
+		player.body.velocity = game.physics.arcade.velocityFromAngle(player.body.rotation, tankSpeed);;
+	} else if(cursors.down.isDown) {
+		player.body.velocity = game.physics.arcade.velocityFromAngle(player.body.rotation, -1*tankSpeed);;
+	}
+
+	if(cursors.left.isDown) {
+		player.angle -= rotationSpeed;
+	} else if(cursors.right.isDown) {
+		player.angle += rotationSpeed;
+	}
 }
