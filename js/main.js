@@ -13,6 +13,8 @@ var rotationSpeed = 2;
 var bulletDelay = 10;
 var fireKey = 32;
 var bulletSpeed = 200;
+var bulletTTL = 20000;
+var maxBullets = 5;
 var playerBullets;
 
 function getRandomBool()
@@ -87,6 +89,7 @@ function createBullet(x, y, angle) {
 	newBullet.anchor.set(0.5,0.5);
 	newBullet.body.velocity = game.physics.arcade.velocityFromAngle(angle, bulletSpeed);
 	newBullet.angle = angle;
+	newBullet.ttl = new Date().getTime() + bulletTTL;
 }
 
 function bulletCollided(bullet, gridLine) {
@@ -104,6 +107,15 @@ function bulletCollided(bullet, gridLine) {
 		angle = angle > 0 ? 180 - angle : -180 - angle;
 	}
 	bullet.body.velocity = game.physics.arcade.velocityFromAngle(angle, bulletSpeed);
+}
+
+function killBullets(bullet) {
+	if(!bullet) return;
+
+	currTime = new Date().getTime();
+	if(currTime > bullet.ttl) {
+		bullet.destroy();
+	}
 }
 
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, "arena", {
@@ -161,7 +173,9 @@ function update() {
 		player.angle += rotationSpeed;
 	}
 
-	if(keyboard.isDown(fireKey) && keyboard.justPressed(fireKey, bulletDelay) ) {
+	playerBullets.forEach(killBullets);
+
+	if(keyboard.isDown(fireKey) && keyboard.justPressed(fireKey, bulletDelay) && playerBullets.total < maxBullets ) {
 		createBullet(player.position.x, player.position.y, player.body.rotation);
 	}
 }
