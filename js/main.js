@@ -1,6 +1,5 @@
 var grid;
-var gridShape;
-var player;
+var player1;
 var maxHlines = 6;
 var maxVlines = 8;
 var arenaHeight = 600;
@@ -15,7 +14,8 @@ var fireKey = 32;
 var bulletSpeed = 200;
 var bulletTTL = 20000;
 var maxBullets = 5;
-var playerBullets;
+var bullets;
+var isGameOver;
 
 function getRandomBool()
 {
@@ -76,15 +76,16 @@ function drawGrid() {
 	}
 }
 
-function createTank() {
-	player = game.add.sprite(20, 20, 'tank');
+function createTank(player, x, y, sprite) {
+	player = game.add.sprite(x, y, sprite);
 	game.physics.arcade.enable(player);
 	player.body.collideWorldBounds = true;
 	player.anchor.set(0.5,0.5);
+	return player;
 }
 
 function createBullet(x, y, angle) {
-	var newBullet = playerBullets.create( x, y, 'bullet');
+	var newBullet = bullets.create( x, y, 'bullet');
 	newBullet.body.collideWorldBounds = true;
 	newBullet.anchor.set(0.5,0.5);
 	newBullet.body.velocity = game.physics.arcade.velocityFromAngle(angle, bulletSpeed);
@@ -118,6 +119,10 @@ function killBullets(bullet) {
 	}
 }
 
+function gameOver(player, bullet) {
+	isGameOver = true;
+}
+
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, "arena", {
 	preload: preload,
 	create: create,
@@ -140,23 +145,39 @@ function create() {
 	grid = game.add.group();
 	grid.enableBody = true;
 
-	playerBullets = game.add.group();
-	playerBullets.enableBody = true;
+	bullets = game.add.group();
+	bullets.enableBody = true;
 
 	drawGrid();
 
-	createTank();
+	player1 = createTank(player1, 20, 20, 'tank');
 
 	cursors = game.input.keyboard.createCursorKeys();
 	keyboard = game.input.keyboard;
 	keyboard.addKeyCapture(fireKey);
-	player.bringToTop();
+	player1.bringToTop();
+	isGameOver = false;
 }
 
-function update() {
-	game.physics.arcade.collide(player, grid);
-	game.physics.arcade.collide(playerBullets, grid, bulletCollided);
+function restart() {
+	player1.destroy();
+	grid.destroy(true, true);
+	bullets.destroy(true, true);
 
+	generateRandomGrid();
+	drawGrid();
+	player1 = createTank(player1, 20, 20, 'tank');
+	player1.bringToTop();
+	isGameOver = false;
+
+}
+
+function updatePlayerCollisions(player) {
+	game.physics.arcade.collide(player, grid);
+	game.physics.arcade.collide(player, bullets, gameOver);
+}
+
+function updatePlayerPosition(player) {
 	player.body.velocity.x = 0;
 	player.body.velocity.y = 0;
 	player.body.angularVelocity = 0;
@@ -173,9 +194,20 @@ function update() {
 		player.angle += rotationSpeed;
 	}
 
-	playerBullets.forEach(killBullets);
-
-	if(keyboard.isDown(fireKey) && keyboard.justPressed(fireKey, bulletDelay) && playerBullets.total < maxBullets ) {
+	if(keyboard.isDown(fireKey) && keyboard.justPressed(fireKey, bulletDelay) && bullets.total < maxBullets ) {
 		createBullet(player.position.x, player.position.y, player.body.rotation);
 	}
+}
+
+function update() {
+	game.physics.arcade.collide(bullets, grid, bulletCollided);
+	updatePlayerCollisions(player1);
+
+	if(isGameOver) {
+		restart();
+		return;
+	}
+
+	bullets.forEach(killBullets);
+	updatePlayerPosition(player1);
 }
