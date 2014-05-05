@@ -143,9 +143,15 @@ function killBullets(bullet) {
 	}
 }
 
+function displayScore() {
+	document.getElementById('score1').innerHTML = player1.score;
+	document.getElementById('score2').innerHTML = player2.score;
+}
+
 function gameOver(player, bullet) {
 	isGameOver = true;
 	player.isPlayerOne ? player2.score++ : player1.score++;
+	displayScore();
 }
 
 var game = new Phaser.Game(arenaWidth, arenaHeight, Phaser.CANVAS, "arena", {
