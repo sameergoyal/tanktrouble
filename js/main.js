@@ -1,6 +1,5 @@
 var grid;
 var player1, player2;
-var bullets1, bullets2;
 var control1 = {
 	up: Phaser.Keyboard.UP,
 	down: Phaser.Keyboard.DOWN,
@@ -97,11 +96,12 @@ function captureKeys(controls) {
 	keyboard.addKeyCapture(controls.fire);
 }
 
-function createTank(player, x, y, sprite) {
+function createTank(player, x, y, sprite, isPlayerOne) {
 	player = game.add.sprite(x, y, sprite);
 	game.physics.arcade.enable(player);
 	player.body.collideWorldBounds = true;
 	player.anchor.set(0.5,0.5);
+	player.isPlayerOne = isPlayerOne;
 	return player;
 }
 
@@ -113,7 +113,7 @@ function createBullet(x, y, angle, isPlayerOne) {
 	newBullet.angle = angle;
 	newBullet.ttl = new Date().getTime() + bulletTTL;
 	newBullet.isPlayerOne = isPlayerOne;
-	isPlayerOne ? bullets1++ : bullets2++;
+	isPlayerOne ? player1.bullets++ : player2.bullets++;
 }
 
 function bulletCollided(bullet, gridLine) {
@@ -138,13 +138,14 @@ function killBullets(bullet) {
 
 	currTime = new Date().getTime();
 	if(currTime > bullet.ttl) {
-		bullet.isPlayerOne ? bullets1-- : bullets2--;
+		bullet.isPlayerOne ? player1.bullets-- : player2.bullets--;
 		bullet.destroy();
 	}
 }
 
 function gameOver(player, bullet) {
 	isGameOver = true;
+	player.isPlayerOne ? player2.score++ : player1.score++;
 }
 
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, "arena", {
@@ -175,11 +176,17 @@ function create() {
 
 	drawGrid();
 
-	player1 = createTank(player1, 20, 20, 'tank1');
-	player2 = createTank(player2, 780, 580, 'tank2');
+	player1 = createTank(player1, 20, 20, 'tank1', true);
+	player2 = createTank(player2, 780, 580, 'tank2', false);
 
-	bullets1 = 0;
-	bullets2 = 0;
+	player1.bullets = 0;
+	player2.bullets = 0;
+
+	player1.score = 0;
+	player2.score = 0;
+
+	player1.controls = control1;
+	player2.controls = control2;
 
 	keyboard = game.input.keyboard;
 	captureKeys(control1);
@@ -188,6 +195,8 @@ function create() {
 }
 
 function restart() {
+	var score1 = player1.score;
+	var score2 = player2.score;
 	player1.destroy();
 	player2.destroy();
 	grid.destroy(true, true);
@@ -195,12 +204,15 @@ function restart() {
 
 	generateRandomGrid();
 	drawGrid();
-	player1 = createTank(player1, 20, 20, 'tank1');
-	player2 = createTank(player2, 780, 580, 'tank2');
-	bullets1 = 0;
-	bullets2 = 0;
+	player1 = createTank(player1, 20, 20, 'tank1', true);
+	player2 = createTank(player2, 780, 580, 'tank2', false);
+	player1.controls = control1;
+	player2.controls = control2;
+	player1.bullets = 0;
+	player2.bullets = 0;
+	player1.score = score1;
+	player2.score = score2;
 	isGameOver = false;
-
 }
 
 function updatePlayerCollisions(player) {
@@ -208,7 +220,7 @@ function updatePlayerCollisions(player) {
 	game.physics.arcade.collide(player, bullets, gameOver);
 }
 
-function manualControlPosition(player, controls, playerBullets, isPlayerOne) {
+function manualControlPosition(player, controls, playerBullets) {
 	if(keyboard.isDown(controls.up)) {
 		player.body.velocity = game.physics.arcade.velocityFromAngle(player.body.rotation, tankSpeed);
 	} else if(keyboard.isDown(controls.down)) {
@@ -222,26 +234,17 @@ function manualControlPosition(player, controls, playerBullets, isPlayerOne) {
 	}
 
 	if(keyboard.isDown(controls.fire) && keyboard.justPressed(controls.fire, bulletDelay) && playerBullets < maxBullets ) {
-		createBullet(player.position.x, player.position.y, player.body.rotation, isPlayerOne);
+		createBullet(player.position.x, player.position.y, player.body.rotation, player.isPlayerOne);
 	}
 }
 
-function updatePlayerPosition(player, isPlayerOne) {
+function updatePlayerPosition(player) {
 	player.body.velocity.x = 0;
 	player.body.velocity.y = 0;
 	player.body.angularVelocity = 0;
 
-	var controls, playerBullets;
-	if(isPlayerOne) {
-		controls = control1;
-		playerBullets = bullets1;
-	} else {
-		controls = control2;
-		playerBullets = bullets2;
-	}
-
-	manualControlPosition(player, controls, playerBullets, isPlayerOne);
-	// TODO: AIControlPosition(player, playerBullets, isPlayerOne)
+	manualControlPosition(player, player.controls, player.bullets, player.isPlayerOne);
+	// TODO: AIControlPosition(player, player.bullets, player.isPlayerOne)
 }
 
 function update() {
@@ -255,6 +258,6 @@ function update() {
 	}
 
 	bullets.forEach(killBullets);
-	updatePlayerPosition(player1, true);
-	updatePlayerPosition(player2, false);
+	updatePlayerPosition(player1);
+	updatePlayerPosition(player2);
 }
