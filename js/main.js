@@ -14,9 +14,9 @@ var control2 = {
 	right: Phaser.Keyboard.F,
 	fire: Phaser.Keyboard.Q,
 };
-var maxHlines = 6;
+var maxHlines = 5;
 var maxVlines = 8;
-var arenaHeight = 600;
+var arenaHeight = 500;
 var arenaWidth = 800;
 var wallDensity = 0.55;
 var keyboard;
@@ -148,7 +148,7 @@ function gameOver(player, bullet) {
 	player.isPlayerOne ? player2.score++ : player1.score++;
 }
 
-var game = new Phaser.Game(800, 600, Phaser.CANVAS, "arena", {
+var game = new Phaser.Game(arenaWidth, arenaHeight, Phaser.CANVAS, "arena", {
 	preload: preload,
 	create: create,
 	update: update,
@@ -177,7 +177,7 @@ function create() {
 	drawGrid();
 
 	player1 = createTank(player1, 20, 20, 'tank1', true);
-	player2 = createTank(player2, 780, 580, 'tank2', false);
+	player2 = createTank(player2, 780, 480, 'tank2', false);
 
 	player1.bullets = 0;
 	player2.bullets = 0;
@@ -205,7 +205,7 @@ function restart() {
 	generateRandomGrid();
 	drawGrid();
 	player1 = createTank(player1, 20, 20, 'tank1', true);
-	player2 = createTank(player2, 780, 580, 'tank2', false);
+	player2 = createTank(player2, 780, 480, 'tank2', false);
 	player1.controls = control1;
 	player2.controls = control2;
 	player1.bullets = 0;
