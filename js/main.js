@@ -157,12 +157,12 @@ function drawGrid() {
 		{
 			if(horGrid[i][j] == true)
 			{
-				hLines[i][j] = grid.create(widthPerRect*j, (heightPerRect*i)-1, 'hLine');
+				hLines[i][j] = grid.create(widthPerRect*j, (heightPerRect*i), 'hLine');
 				hLines[i][j].body.immovable = true;
 			}
 			if(verGrid[i][j] == true)
 			{
-				vLines[i][j] = grid.create((widthPerRect*j)-1, heightPerRect*i, 'vLine');
+				vLines[i][j] = grid.create((widthPerRect*j), heightPerRect*i, 'vLine');
 				vLines[i][j].body.immovable = true;
 			}
 		}
@@ -183,6 +183,7 @@ function createTank(player, x, y, sprite, isPlayerOne) {
 	player.body.collideWorldBounds = true;
 	player.anchor.set(0.5,0.5);
 	player.isPlayerOne = isPlayerOne;
+	if(!isPlayerOne) player.angle = 180;
 	return player;
 }
 
@@ -235,7 +236,7 @@ function gameOver(player, bullet) {
 	displayScore();
 }
 
-var game = new Phaser.Game(arenaWidth, arenaHeight, Phaser.CANVAS, "arena", {
+var game = new Phaser.Game(arenaWidth+2, arenaHeight+2, Phaser.CANVAS, "arena", {
 	preload: preload,
 	create: create,
 	update: update,
