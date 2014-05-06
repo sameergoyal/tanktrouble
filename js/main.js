@@ -28,6 +28,8 @@ var bulletTTL = 20000;
 var maxBullets = 5;
 var bullets;
 var isGameOver;
+var dfsGrid;
+var connectedList;
 
 function getRandomBool()
 {
@@ -35,23 +37,21 @@ function getRandomBool()
 }
 
 function vBound(i) {
-	return i === 0 || i === maxHlines;
+	return i <= 0 || i >= maxHlines;
 }
 
 function hBound(j) {
-	return j === 0 || j === maxVlines;
+	return j <= 0 || j >= maxVlines;
 }
 
 function generateRandomGrid() {
 	horGrid = new Array(maxHlines+1);
-	verGrid = new Array(maxVlines+1);
+	verGrid = new Array(maxHlines+1);
 	hLines = new Array(maxHlines+1);
-	vLines = new Array(maxVlines+1);
+	vLines = new Array(maxHlines+1);
 	for (var i = 0; i < maxHlines+1; i++) {
-		horGrid[i] = new Array(maxHlines+1);
-		hLines[i] = new Array(maxHlines+1);
-	};
-	for(var i = 0; i < maxVlines+1; i++) {
+		horGrid[i] = new Array(maxVlines+1);
+		hLines[i] = new Array(maxVlines+1);
 		verGrid[i] = new Array(maxVlines+1);
 		vLines[i] = new Array(maxVlines+1);
 	}
@@ -61,10 +61,91 @@ function generateRandomGrid() {
 		{
 			horGrid[i][j] = getRandomBool();
 			verGrid[i][j] = getRandomBool();
-			if(vBound(i)) horGrid[i][j] = 1;
-			if(hBound(j)) verGrid[i][j] = 1;
+			if(vBound(i)) horGrid[i][j] = true;
+			if(hBound(j)) verGrid[i][j] = true;
 		}
-	};
+	}
+}
+
+function dfs(i, j, k) {
+	if(dfsGrid[i][j] !== -1) return;
+
+	dfsGrid[i][j] = k;
+	if(!vBound(i+1) && !horGrid[i+1][j]) {
+		dfs(i+1,j,k);
+	}
+	if(!vBound(i) && !horGrid[i][j]) {
+		dfs(i-1,j,k);
+	}
+	if(!hBound(j+1) && !verGrid[i][j+1]) {
+		dfs(i, j+1, k);
+	}
+	if(!hBound(j) && !verGrid[i][j]) {
+		dfs(i, j-1, k);
+	}
+}
+
+function ddfs(i,j) {
+	if(dfsGrid[i][j] === -1) return;
+
+	dfsGrid[i][j] = -1;
+	if(!vBound(i+1)) {
+		if(horGrid[i+1][j] && connectedList.indexOf(dfsGrid[i+1][j]) === -1) {
+			horGrid[i+1][j] = false;
+			connectedList.push(dfsGrid[i+1][j]);
+		}
+		ddfs(i+1,j);
+	}
+	if(!vBound(i)) {
+		if(horGrid[i][j] && connectedList.indexOf(dfsGrid[i-1][j]) === -1) {
+			horGrid[i][j] = false;
+			connectedList.push(dfsGrid[i-1][j]);
+		}
+		ddfs(i-1,j);
+	}
+	if(!hBound(j+1)) {
+		if(verGrid[i][j+1] && connectedList.indexOf(dfsGrid[i][j+1]) === -1) {
+			verGrid[i][j+1] = false;
+			connectedList.push(dfsGrid[i][j+1]);
+		}
+		ddfs(i, j+1);
+	}
+	if(!hBound(j)) {
+		if(verGrid[i][j] && connectedList.indexOf(dfsGrid[i][j-1]) === -1) {
+			verGrid[i][j] = false;
+			connectedList.push(dfsGrid[i][j-1]);
+		}
+		ddfs(i, j-1);
+	}
+}
+
+function checkConnectivity() {
+	dfsGrid = new Array(maxHlines);
+	for(var i=0; i < maxHlines; i++)
+		dfsGrid[i] = new Array(maxVlines);
+	for(var i=0; i < maxHlines; i++) {
+		for(var j=0; j < maxVlines; j++) {
+			dfsGrid[i][j] = -1;
+		}
+	}
+	var components = 0;
+	for(var i=0; i < maxHlines; i++) {
+		for(var j=0; j < maxVlines; j++) {
+			if(dfsGrid[i][j] === -1) {
+				dfs(i,j,components);
+				components++;
+			}
+		}
+	}
+	return components === 1;
+}
+
+function ensureConnectivity() {
+	if(checkConnectivity()) return;
+	connectedList = [];
+	connectedList.push(-1);
+	connectedList.push(0);
+	ddfs(0,0);
 }
 
 function drawGrid() {
@@ -173,6 +254,7 @@ function create() {
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 
 	generateRandomGrid();
+	ensureConnectivity();
 
 	grid = game.add.group();
 	grid.enableBody = true;
@@ -209,6 +291,7 @@ function restart() {
 	bullets.destroy(true, true);
 
 	generateRandomGrid();
+	ensureConnectivity();
 	drawGrid();
 	player1 = createTank(player1, 20, 20, 'tank1', true);
 	player2 = createTank(player2, 780, 480, 'tank2', false);
