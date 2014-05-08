@@ -242,7 +242,7 @@ function attachHandlers() {
 			if(isGameOver) {
 				restart();
 			} else if(isStartScreen) {
-				startGame()();
+				startGame();
 			}
 		}
 	});
