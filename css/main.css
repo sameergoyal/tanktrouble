@@ -91,7 +91,11 @@ h2, #scores {
 }
 
 .description {
-    text-align: center;
+  text-align: center;
+}
+
+#instructions {
+  margin: 0px 60px;
 }
 
 #arena {
@@ -105,7 +109,7 @@ h2, #scores {
 #startScreen {
   width: inherit;
   height: inherit;
-  background: #FFFFFF;
+  background: #DDDDDD;
   position: absolute;
 }
 
@@ -197,7 +201,12 @@ a.button span {
   height: 23px;
 }
 
-#restart {
+a.button.controls {
+  cursor: default;
+  width: 10px;
+}
+
+#restart, #start {
   border-top: solid 1px #F08033;
   border-left: solid 1px #F07733;
   border-right: solid 1px #F07733;
@@ -215,7 +224,7 @@ a.button span {
   border: 1px solid #EE7733;
 }
 
-#restart:hover {
+#restart:hover, #start:hover {
   border-top: solid 1px #F08033;
   border-left: solid 1px #EE7733;
   border-right: solid 1px #EE7733;
@@ -233,4 +242,71 @@ a.button span {
 #restartWrapper {
   position: relative;
   top:33%;
+}
+
+#startWrapper {
+  position: relative;
+  top:10%;
+}
+
+.arenaHeader {
+  margin-bottom: 20px;
+}
+
+.player {
+  float: left;
+  width:400px;
+  height:230px;
+}
+
+.controls.float {
+  float: left;
+  margin: 0px 10px;
+}
+
+@-webkit-keyframes glow {
+  from {
+    box-shadow: 0px 0px 20px #F29A33;
+  }
+  50% {
+    box-shadow: none;
+  }
+  to {
+    box-shadow: 0px 0px 20px #F29A33;
+  }
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0px 0px 20px #F29A33;
+  }
+  50% {
+    box-shadow: none;
+  }
+  to {
+    box-shadow: 0px 0px 20px #F29A33;
+  }
+}
+
+a.button.fire {
+  animation-duration: 3s;
+  animation-name: glow;
+  animation-iteration-count: infinite;
+  -webkit-animation-name: glow;
+  -webkit-animation-duration: 3s;
+  -webkit-animation-iteration-count: infinite;
+}
+
+.centerRow {
+  width:276px;
+  height: 50px;
+  margin: auto;
+}
+
+.controls.down {
+  clear: both;
+}
+
+#start{
+  clear: both;
 }

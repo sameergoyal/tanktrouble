@@ -6,7 +6,7 @@ var control1 = {
 	down: Phaser.Keyboard.DOWN,
 	left: Phaser.Keyboard.LEFT,
 	right: Phaser.Keyboard.RIGHT,
-	fire: Phaser.Keyboard.SPACEBAR,
+	fire: Phaser.Keyboard.M,
 };
 var control2 = {
 	up: Phaser.Keyboard.E,
@@ -29,6 +29,7 @@ var bulletTTL = 20000;
 var maxBullets = 5;
 var bullets;
 var isGameOver;
+var isStartScreen = true;
 var dfsGrid;
 var connectedList;
 
@@ -235,9 +236,14 @@ function displayScore(isPlayerOne) {
 
 function attachHandlers() {
 	document.getElementById('restart').addEventListener('click', restart);
+	document.getElementById('start').addEventListener('click', startGame);
 	document.body.addEventListener('keypress',function(e){
-		if(e.which === 13 && isGameOver) {
-			restart();
+		if(e.which === 13) {
+			if(isGameOver) {
+				restart();
+			} else if(isStartScreen) {
+				startGame()();
+			}
 		}
 	});
 }
@@ -255,10 +261,10 @@ function gameOver(player, bullet) {
 	isGameOver = true;
 	player.isPlayerOne ? player2.score++ : player1.score++;
 	displayScore(player.isPlayerOne);
-	attachHandlers();
 }
 
 function startGame() {
+	isStartScreen = false;
 	document.getElementById('startScreen').style.display = "none";
 	game = new Phaser.Game(arenaWidth+2, arenaHeight+2, Phaser.CANVAS, "arena", {
 		preload: preload,
@@ -266,8 +272,6 @@ function startGame() {
 		update: update,
 	}, false, true);
 }
-
-startGame();
 
 function preload() {
 	game.load.image('hLine', 'assets/hLine.jpg');
@@ -360,8 +364,10 @@ function manualControlPosition(player, controls, playerBullets) {
 function updatePlayerPosition(player) {
 	stopPlayer(player);
 
-	manualControlPosition(player, player.controls, player.bullets, player.isPlayerOne);
-	// TODO: AIControlPosition(player, player.bullets, player.isPlayerOne)
+	if(!isGameOver) {
+		manualControlPosition(player, player.controls, player.bullets, player.isPlayerOne);
+		// TODO: AIControlPosition(player, player.bullets, player.isPlayerOne)
+	}
 }
 
 function update() {
@@ -369,10 +375,10 @@ function update() {
 		return;
 	}
 
-	updatePlayerPosition(player1);
-	updatePlayerPosition(player2);
 	bullets.forEach(killBullets);
 	game.physics.arcade.collide(bullets, grid, bulletCollided);
 	updatePlayerCollisions(player1);
 	updatePlayerCollisions(player2);
+	updatePlayerPosition(player1);
+	updatePlayerPosition(player2);
 }

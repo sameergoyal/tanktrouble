@@ -21,7 +21,38 @@
 					Player II : <span id="score2">0</span>
 				</p>
 				<div id="arena">
-					<div id="startScreen">	
+					<div id="startScreen">
+						<div id="startWrapper">
+							<h2 class="description arenaHeader">Controls</h2>
+							<div id="controlsWrapper">
+								<div id="player1" class="player">
+									<h2 class="description">Player I</h2>
+									<div id="controls1">
+										<a class="button controls">↑</a>
+										<div class="centerRow">
+											<a class="button controls float">←</a>
+											<a class="button controls float fire">M</a>
+											<a class="button controls float">→</a>
+										</div>
+										<a class="button controls down">↓</a>
+									</div>
+								</div>
+								<div id="player2" class="player">
+									<h2 class="description">Player II</h2>
+									<div id="controls1">
+										<a class="button controls">E</a>
+										<div class="centerRow">
+											<a class="button controls float">S</a>
+											<a class="button controls float fire">Q</a>
+											<a class="button controls float">F</a>
+										</div>
+										<a class="button controls down">D</a>
+									</div>
+								</div>
+							</div>
+							<a id="start" class="button">Start Game</a>
+							<h2 class="description">(or press Enter)</h2>
+						</div>
 					</div>
 					<div id="restartScreen">
 						<div id="restartWrapper">
@@ -31,6 +62,8 @@
 						</div>
 					</div>
 				</div>
+				<p id="instructions" class="description">HOW TO PLAY: Use the controls to move your tank around and fire bullets. You have a maximum of 5 bullets after which you have to wait for one of the bullets to die. Each bullet lasts for 20 seconds. If any of the bullets hit your tank, you die.</p>
+				<hr/>
 				<footer>
 					<p class="description">Made using the <a href="http://en.wikipedia.org/wiki/Force_(Star_Wars)" target="_blank">force</a> by <a href="https://github.com/sameergoyal" target="_blank">Sameer Goyal</a>.</p>
 				</footer>
@@ -38,5 +71,6 @@
 		</div>
 		<script src="js/phaser.min.js" type="text/javascript"></script>
 		<script src="js/main.js" type="text/javascript"></script>
+		<script type="text/javascript">attachHandlers()</script>
 	</body>
 </html>
