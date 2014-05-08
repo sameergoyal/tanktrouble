@@ -1,4 +1,5 @@
 var grid;
+var game;
 var player1, player2;
 var control1 = {
 	up: Phaser.Keyboard.UP,
@@ -225,22 +226,48 @@ function killBullets(bullet) {
 	}
 }
 
-function displayScore() {
+function displayScore(isPlayerOne) {
+	document.getElementById('restartScreen').style.display = 'block';
 	document.getElementById('score1').innerHTML = player1.score;
 	document.getElementById('score2').innerHTML = player2.score;
+	document.getElementById('winner').innerHTML = isPlayerOne ? 'II' : 'I';
+}
+
+function attachHandlers() {
+	document.getElementById('restart').addEventListener('click', restart);
+	document.body.addEventListener('keypress',function(e){
+		if(e.which === 13 && isGameOver) {
+			restart();
+		}
+	});
+}
+
+function stopPlayer(player) {
+	player.body.velocity.x = 0;
+	player.body.velocity.y = 0;
+	player.body.angularVelocity = 0;
 }
 
 function gameOver(player, bullet) {
+	stopPlayer(player1);
+	stopPlayer(player2);
+	bullets.exists = false;
 	isGameOver = true;
 	player.isPlayerOne ? player2.score++ : player1.score++;
-	displayScore();
+	displayScore(player.isPlayerOne);
+	attachHandlers();
 }
 
-var game = new Phaser.Game(arenaWidth+2, arenaHeight+2, Phaser.CANVAS, "arena", {
-	preload: preload,
-	create: create,
-	update: update,
-}, false, true);
+function startGame() {
+	document.getElementById('startScreen').style.display = "none";
+	game = new Phaser.Game(arenaWidth+2, arenaHeight+2, Phaser.CANVAS, "arena", {
+		preload: preload,
+		create: create,
+		update: update,
+	}, false, true);
+}
+
+startGame();
 
 function preload() {
 	game.load.image('hLine', 'assets/hLine.jpg');
@@ -284,6 +311,7 @@ function create() {
 }
 
 function restart() {
+	document.getElementById('restartScreen').style.display = 'none';
 	var score1 = player1.score;
 	var score2 = player2.score;
 	player1.destroy();
@@ -302,6 +330,7 @@ function restart() {
 	player2.bullets = 0;
 	player1.score = score1;
 	player2.score = score2;
+	bullets.exists = true;
 	isGameOver = false;
 }
 
@@ -329,25 +358,21 @@ function manualControlPosition(player, controls, playerBullets) {
 }
 
 function updatePlayerPosition(player) {
-	player.body.velocity.x = 0;
-	player.body.velocity.y = 0;
-	player.body.angularVelocity = 0;
+	stopPlayer(player);
 
 	manualControlPosition(player, player.controls, player.bullets, player.isPlayerOne);
 	// TODO: AIControlPosition(player, player.bullets, player.isPlayerOne)
 }
 
 function update() {
-	game.physics.arcade.collide(bullets, grid, bulletCollided);
-	updatePlayerCollisions(player1);
-	updatePlayerCollisions(player2);
-
 	if(isGameOver) {
-		restart();
 		return;
 	}
 
-	bullets.forEach(killBullets);
 	updatePlayerPosition(player1);
 	updatePlayerPosition(player2);
+	bullets.forEach(killBullets);
+	game.physics.arcade.collide(bullets, grid, bulletCollided);
+	updatePlayerCollisions(player1);
+	updatePlayerCollisions(player2);
 }
